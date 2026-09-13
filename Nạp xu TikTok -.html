@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xu TikTok: Mua và nạp Xu để gửi Quà tặng | TikTok</title>
+    <style>
+        :root {
+            --tiktok-red: #FE2C55;
+            --tiktok-red-hover: #E02649;
+            --bg-gray: #F8F8F8;
+            --box-gray: #F1F1F2;
+            --border-color: rgba(22, 24, 35, 0.12);
+            --text-main: #161823;
+            --text-sub: rgba(22, 24, 35, 0.5);
+            --success-green: #00D26A;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-gray); color: var(--text-main); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 40px; }
+
+        /* NAVBAR HEADER */
+        .navbar { width: 100%; height: 60px; background: #fff; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; position: sticky; top: 0; z-index: 100; }
+        .logo-container { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 22px; cursor: pointer; }
+        .search-bar { display: flex; align-items: center; background: rgba(22, 24, 35, 0.06); border-radius: 92px; padding: 8px 16px; width: 320px; }
+        .search-bar input { border: none; background: transparent; outline: none; width: 100%; font-size: 14px; }
+        .btn-nav-login { background: var(--tiktok-red); color: #fff; border: none; border-radius: 4px; padding: 6px 16px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+        /* MAIN CONTAINER */
+        .main-wrapper { width: 100%; max-width: 800px; padding: 24px 16px; }
+        .card { background: #fff; border-radius: 16px; padding: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 20px; position: relative; }
+        .card-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+
+        /* SEARCH USER BOX */
+        .user-search-container { background: var(--box-gray); border-radius: 12px; padding: 16px; margin-bottom: 24px; }
+        .user-input-group { display: flex; gap: 10px; }
+        .user-input-group input { flex: 1; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
+        .user-input-group input:focus { border-color: var(--text-main); }
+        .btn-search { background: var(--text-main); color: #fff; border: none; border-radius: 8px; padding: 0 20px; font-weight: 600; cursor: pointer; }
+        .user-profile-info { display: none; align-items: center; justify-content: space-between; background: #fff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .profile-details { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--tiktok-red); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .balance-tag { font-size: 13px; font-weight: 600; color: var(--tiktok-red); background: rgba(254, 44, 85, 0.08); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
+        .btn-change-user { border: none; background: transparent; color: var(--text-sub); text-decoration: underline; cursor: pointer; font-size: 12px; margin-left: 10px; }
+
+        /* SAVINGS BANNER */
+        .savings-note { font-size: 14px; margin-bottom: 16px; }
+        .savings-highlight { color: var(--tiktok-red); font-weight: 600; }
+
+        /* COIN GRID */
+        .coin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+        .coin-item { background: var(--box-gray); border: 2px solid transparent; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s ease; }
+        .coin-item:hover { border-color: rgba(254, 44, 85, 0.5); }
+        .coin-item.active { border-color: var(--tiktok-red); background: #fff; }
+        .coin-qty { font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .coin-price { font-size: 13px; color: var(--text-sub); margin-top: 4px; }
+
+        /* TIKTOK COIN SVG ICON */
+        .tiktok-coin { width: 24px; height: 24px; flex-shrink: 0; }
+
+        /* CUSTOM INPUT */
+        .custom-input-box { display: none; margin-bottom: 20px; background: var(--box-gray); padding: 16px; border-radius: 12px; }
+        .custom-input-box input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 15px; }
+
+        /* TOTAL & SUBMIT */
+        .total-section { font-size: 16px; margin-bottom: 16px; }
+        .total-price { font-weight: 700; font-size: 18px; margin-left: 8px; }
+        .btn-nap { width: 100%; max-width: 240px; padding: 12px; background: rgba(254, 44, 85, 0.4); color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: not-allowed; transition: background 0.2s; }
+        .btn-nap.active { background: var(--tiktok-red); cursor: pointer; }
+        .btn-nap.active:hover { background: var(--tiktok-red-hover); }
+
+        .secure-badge { position: absolute; bottom: 24px; right: 32px; display: flex; align-items: center; gap: 4px; font-size: 11px; color: #2e7d32; border: 1px solid #c8e6c9; padding: 4px 8px; border-radius: 4px; background: #f1f8e9; }
+
+        /* LỊCH SỬ GIAO DỊCH TABLE */
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        .history-table th, .history-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .history-table th { color: var(--text-sub); font-weight: 600; background: var(--box-gray); }
+        .badge-success { color: var(--success-green); font-weight: 600; background: rgba(0, 210, 106, 0.1); padding: 4px 8px; border-radius: 12px; font-size: 11px; display: inline-block; }
+
+        /* MODAL VIETQR & RECEIPT */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #fff; width: 100%; max-width: 440px; border-radius: 16px; padding: 24px; position: relative; animation: popIn 0.2s ease-out; }
+        @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+        .qr-image-wrapper { text-align: center; background: var(--box-gray); padding: 16px; border-radius: 12px; margin-bottom: 16px; }
+        .qr-image-wrapper img { width: 200px; height: 200px; border-radius: 8px; }
+        .payment-details { font-size: 13px; line-height: 1.8; margin-bottom: 16px; background: var(--box-gray); padding: 12px; border-radius: 8px; }
+        .payment-details div { display: flex; justify-content: space-between; }
+        
+        .status-loading { text-align: center; font-size: 13px; color: var(--text-sub); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .spinner { width: 16px; height: 16px; border: 2px solid #ccc; border-top-color: var(--tiktok-red); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .close-modal { position: absolute; top: 16px; right: 16px; font-size: 20px; cursor: pointer; border: none; background: none; }
+        .success-box { text-align: center; padding: 10px 0; }
+        .success-icon { width: 56px; height: 56px; background: #e8f5e9; color: #2e7d32; font-size: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; }
+    </style>
+</head>
+<body>
+
+    <!-- KHU VỰC SVG TEMPLATE ĐỒNG XU TIKTOK -->
+    <svg style="display: none;">
+        <symbol id="icon-tiktok-coin" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="11" fill="#FFB703"/>
+            <circle cx="12" cy="12" r="11" fill="url(#coin-grad)"/>
+            <circle cx="12" cy="12" r="9.2" fill="none" stroke="#FFFFFF" stroke-width="0.8" opacity="0.7"/>
+            <path d="M14.2 7.8c.3.2.7.4 1.1.4v1.8c-.4 0-.8-.1-1.1-.3-.3-.2-.5-.5-.6-.9v5c0 1.5-1.2 2.7-2.7 2.7S8.2 15.3 8.2 13.8s1.2-2.7 2.7-2.7c.2 0 .4 0 .6.1v1.9c-.2-.1-.4-.1-.6-.1-.5 0-.9.4-.9.9s.4.9.9.9.9-.4.9-.9V6.5h2.4c0 .5.2.9.5 1.3z" fill="#FFFFFF"/>
+            <defs>
+                <linearGradient id="coin-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFD100"/>
+                    <stop offset="100%" stop-color="#FF8E00"/>
+                </linearGradient>
+            </defs>
+        </symbol>
+    </svg>
+
+    <!-- NAVBAR HEADER -->
+    <div class="navbar">
+        <div class="logo-container">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><path d="M16.7 3C17.3 6.1 19.6 8.5 22.8 9.1V12.1C20.6 12 18.6 11.1 17.1 9.8V20.2C17.1 24.3 13.8 27.6 9.7 27.6C5.6 27.6 2.3 24.3 2.3 20.2C2.3 16.1 5.6 12.8 9.7 12.8C10.3 12.8 10.9 12.9 11.5 13.1V16.3C10.9 16.1 10.3 16 9.7 16C7.4 16 5.5 17.9 5.5 20.2C5.5 22.5 7.4 24.4 9.7 24.4C12 24.4 13.9 22.5 13.9 20.2V3H16.7Z" fill="#000000"/></svg>
+            <span>TikTok</span>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Tìm kiếm">
+        </div>
+        <button class="btn-nav-login">Đăng nhập</button>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-wrapper">
+        <div class="card">
+            <div class="card-title">Nhận Xu</div>
+
+            <!-- TRA CỨU ID TIKTOK -->
+            <div class="user-search-container">
+                <div class="user-input-group" id="search-input-box">
+                    <input type="text" id="tiktok-id-input" placeholder="Nhập TikTok ID (VD: username)">
+                    <button class="btn-search" onclick="searchUser()">Tìm kiếm</button>
+                </div>
+                <div class="user-profile-info" id="user-profile-box">
+                    <div class="profile-details">
+                        <div class="avatar" id="user-avatar">U</div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 14px; display: flex; align-items: center;">
+                                <span id="user-name">User Name</span>
+                                <button class="btn-change-user" onclick="resetUserSearch()">[Đổi ID]</button>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-sub);" id="user-handle">@username</div>
+                        </div>
+                    </div>
+                    <div class="balance-tag">
+                        Số dư: 
+                        <svg class="tiktok-coin"><use href="#icon-tiktok-coin"></use></svg>
+                        <span id="current-coins">0</span> Xu
+                    </div>
+                </div>
+            </div>
+
+            <div class="savings-note">
+                Nạp: <span class="savings-highlight">Tiết kiệm khoảng 25% với phí dịch vụ của bên thứ ba thấp hơn.</span> ⓘ
+            </div>
+
+            <!-- GÓI XU CÓ HÌNH ĐỒNG XU TIKTOK CHUẨN -->
+            <div class="coin-grid">
+                <div class="coin-item" onclick="selectCoin(30, 8400, this)">
+                    <div class="coin-qty">
+                        <svg class="tiktok-coin"><use href="#icon-tiktok-coin"></use></svg>
+                        <span>30</span>
+                    </div>
+                    <div class="coin-price">8.400 đ</div>
+                </div>
+                <div class="coin-item" onclick="selectCoin(350, 98000, this)">
+                    <div class="coin-qty">
+                        <svg class="tiktok-coin"><use href="#icon-tiktok-coin"></use></svg>
+                        <span>350</span>
+                    </div>
+                    <div class="coin-price">98.000 đ</div>
+                </div>
+                <div class="coin-item" onclick="selectCoin(700, 196000, this)">
+                    <div class="coin-qty">
+                        <svg class="tiktok-coin"><use href="#icon-tiktok-coin"></use></svg>
+                        <span>700</span>
+                    </div>
+                    <div class="coin-price">196.000 đ</div>
+                </div>
+                <div class="coin-item" onclick="selectCoin(1400, 392000, this)">
+                    <div class="coin-qty">
+                        <svg class="tiktok-coin"><use href="#icon-tiktok-coin"></use></svg>
+                        <span>1,400</span>
+                    </div>
+                    <div class="coin-price">392.000 đ</div>
+                </div>
+                <div class="coin-item" onclick="selectCoin(3500, 980000, this)">
+                    <div class="coin-qty">
+                        <svg class="tiktok-coin"><use href="#icon-tiktok-coin"></use></svg>
+                        <span>3,500</span>
+                    </div>
+                    <div class="coin-price">980.000 đ</div>
+                </div>
+                <div class="coin-item" onclick="selectCoin(7000, 1960000, this)">
+                    <div class="coin-qty">
+                        <svg class="tiktok-coin"><use href="#icon-tiktok-coin"></use></svg>
+                        <span>7,000</span>
+                    </div>
+                    <div class="coin-price">1.960.000 đ</div>
+                </div>
+                <div class="coin-item" onclick="selectCoin(17500, 4900000, this)">
+                    <div class="coin-qty">
+                        <svg class="tiktok-coin"><use href="#icon-tiktok-coin"></use></svg>
+                        <span>17,500</span>
+                    </div>
+                    <div class="coin-price">4.900.000 đ</div>
+                </div>
+                <div class="coin-item" onclick="enableCustomCoin(this)">
+                    <div class="coin-qty">
+                        <svg class="tiktok-coin"><use href="#icon-tiktok-coin"></use></svg>
+                        <span>Tùy chỉnh</span>
+                    </div>
+                    <div class="coin-price">Hỗ trợ số lượng lớn</div>
+                </div>
+            </div>
+
+            <!-- TÙY CHỈNH XU -->
+            <div class="custom-input-box" id="custom-box">
+                <input type="number" id="custom-coin-input" placeholder="Nhập số xu cần nạp (Tối thiểu 30)" oninput="calcCustomCoin()">
+            </div>
+
+            <!-- TỔNG TIỀN VÀ NÚT NẠP -->
+            <div class="total-section">
+                Tổng <span class="total-price" id="total-price-display">0 đ</span>
+            </div>
+
+            <button class="btn-nap" id="btn-submit" onclick="openPaymentModal()">Nạp</button>
+
+            <div class="secure-badge">
+                🛡️ SECURE Payment
+            </div>
+        </div>
+
+        <!-- BẢNG LỊCH SỬ GIAO DỊCH -->
+        <div class="card">
+            <div class="card-title" style="font-size: 18px;">📋 Lịch Sử Giao Dịch</div>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Mã GD</th>
+                        <th>Tài khoản</th>
+                        <th>Số Xu</th>
+                        <th>Số tiền</th>
+                        <th>Thời gian</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body">
+                    <tr id="empty-history">
+                        <td colspan="6" style="text-align: center; color: var(--text-sub); padding: 20px;">
+                            Chưa có giao dịch nào được thực hiện
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL VIETQR & RECEIPT -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">✕</button>
+            
+            <!-- BƯỚC QUÉT QR -->
+            <div id="modal-step-qr">
+                <div class="modal-header">Thanh toán qua VietQR</div>
+                <div class="qr-image-wrapper">
+                    <img id="qr-img" src="" alt="VietQR Payment">
+                </div>
+                <div class="payment-details">
+                    <div><span>Tài khoản nhận:</span><b id="pay-target">@username</b></div>
+                    <div><span>Số xu quy đổi:</span><b id="pay-coins">0 Xu</b></div>
+                    <div><span>Số tiền:</span><b id="pay-amount" style="color: var(--tiktok-red);">0 đ</b></div>
+                    <div><span>Nội dung CK:</span><b id="pay-memo" style="color: #1976d2;">NAP000000</b></div>
+                </div>
+                <div class="status-loading">
+                    <div class="spinner"></div>
+                    <span>Đang chờ hệ thống ghi nhận chuyển khoản...</span>
+                </div>
+            </div>
+
+            <!-- BƯỚC THÀNH CÔNG -->
+            <div id="modal-step-success" style="display: none;">
+                <div class="success-box">
+                    <div class="success-icon">✓</div>
+                    <h3 style="margin-bottom: 8px;">Nạp Xu Thành Công!</h3>
+                    <p style="font-size: 14px; color: var(--text-sub); margin-bottom: 16px;">Đã cộng <b id="added-coins" style="color: var(--tiktok-red);">0 Xu</b> vào tài khoản <b id="success-target">@user</b></p>
+                    <div class="payment-details">
+                        <div><span>Số dư xu mới:</span><b id="new-balance-display" style="color: #2e7d32;">0 Xu</b></div>
+                        <div><span>Mã giao dịch:</span><b id="tx-code">#TX123456</b></div>
+                    </div>
+                    <button class="btn-nap active" style="max-width: 100%; margin-top: 12px;" onclick="resetToStart()">Nạp tiếp / Quay lại đầu trang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const RATE_PER_COIN = 280;
+        let currentUser = null;
+        let selectedCoins = 0;
+        let selectedPrice = 0;
+        let checkTimer = null;
+        let transactionHistory = [];
+
+        function searchUser() {
+            const input = document.getElementById('tiktok-id-input').value.trim();
+            if (!input) {
+                alert("Vui lòng nhập TikTok ID!");
+                return;
+            }
+
+            const handle = input.startsWith('@') ? input : '@' + input;
+            currentUser = {
+                handle: handle,
+                name: handle.substring(1),
+                balance: 120
+            };
+
+            document.getElementById('user-handle').innerText = currentUser.handle;
+            document.getElementById('user-name').innerText = currentUser.name;
+            document.getElementById('user-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
+            document.getElementById('current-coins').innerText = currentUser.balance.toLocaleString();
+
+            document.getElementById('search-input-box').style.display = 'none';
+            document.getElementById('user-profile-box').style.display = 'flex';
+            
+            updateSubmitButton();
+        }
+
+        function resetUserSearch() {
+            currentUser = null;
+            document.getElementById('search-input-box').style.display = 'flex';
+            document.getElementById('user-profile-box').style.display = 'none';
+            document.getElementById('tiktok-id-input').value = '';
+            resetCoinSelection();
+            updateSubmitButton();
+        }
+
+        function selectCoin(coins, price, element) {
+            selectedCoins = coins;
+            selectedPrice = price;
+
+            document.getElementById('custom-box').style.display = 'none';
+            document.querySelectorAll('.coin-item').forEach(item => item.classList.remove('active'));
+            if(element) element.classList.add('active');
+
+            updateTotalPrice();
+        }
+
+        function enableCustomCoin(element) {
+            document.querySelectorAll('.coin-item').forEach(item => item.classList.remove('active'));
+            if(element) element.classList.add('active');
+
+            document.getElementById('custom-box').style.display = 'block';
+            calcCustomCoin();
+        }
+
+        function calcCustomCoin() {
+            const val = parseInt(document.getElementById('custom-coin-input').value) || 0;
+            selectedCoins = val;
+            selectedPrice = val * RATE_PER_COIN;
+            updateTotalPrice();
+        }
+
+        function updateTotalPrice() {
+            document.getElementById('total-price-display').innerText = selectedPrice.toLocaleString('vi-VN') + " đ";
+            updateSubmitButton();
+        }
+
+        function updateSubmitButton() {
+            const btn = document.getElementById('btn-submit');
+            if (currentUser && selectedCoins >= 30) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        function resetCoinSelection() {
+            selectedCoins = 0;
+            selectedPrice = 0;
+            document.querySelectorAll('.coin-item').forEach(item => item.classList.remove('active'));
+            document.getElementById('custom-box').style.display = 'none';
+            document.getElementById('custom-coin-input').value = '';
+            updateTotalPrice();
+        }
+
+        function openPaymentModal() {
+            if (!currentUser) {
+                alert("Vui lòng tìm kiếm tài khoản TikTok trước!");
+                return;
+            }
+            if (selectedCoins < 30) {
+                alert("Số lượng xu nạp tối thiểu là 30 xu!");
+                return;
+            }
+
+            const memo = "NAPXU" + Math.floor(100000 + Math.random() * 900000);
+            const bankId = "MB";
+            const accountNo = "0123456789";
+            const accountName = "TIKTOK COIN TOPUP";
+
+            const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${selectedPrice}&addInfo=${encodeURIComponent(memo)}&accountName=${encodeURIComponent(accountName)}`;
+
+            document.getElementById('qr-img').src = qrUrl;
+            document.getElementById('pay-target').innerText = currentUser.handle;
+            document.getElementById('pay-coins').innerText = selectedCoins.toLocaleString() + " Xu";
+            document.getElementById('pay-amount').innerText = selectedPrice.toLocaleString('vi-VN') + " đ";
+            document.getElementById('pay-memo').innerText = memo;
+
+            document.getElementById('modal-step-qr').style.display = 'block';
+            document.getElementById('modal-step-success').style.display = 'none';
+            document.getElementById('payment-modal').style.display = 'flex';
+
+            // Mô phỏng thanh toán thành công sau 4 giây
+            checkTimer = setTimeout(() => {
+                showSuccess(memo);
+            }, 4000);
+        }
+
+        function showSuccess(memo) {
+            currentUser.balance += selectedCoins;
+            document.getElementById('current-coins').innerText = currentUser.balance.toLocaleString();
+
+            document.getElementById('added-coins').innerText = selectedCoins.toLocaleString() + " Xu";
+            document.getElementById('success-target').innerText = currentUser.handle;
+            document.getElementById('new-balance-display').innerText = currentUser.balance.toLocaleString() + " Xu";
+            document.getElementById('tx-code').innerText = "#" + memo;
+
+            // Lưu lịch sử giao dịch
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0') + ' ' + now.getDate() + '/' + (now.getMonth() + 1);
+            
+            transactionHistory.unshift({
+                id: "#" + memo,
+                user: currentUser.handle,
+                coins: selectedCoins,
+                price: selectedPrice,
+                time: timeStr
+            });
+
+            renderHistory();
+
+            document.getElementById('modal-step-qr').style.display = 'none';
+            document.getElementById('modal-step-success').style.display = 'block';
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById('history-body');
+            if (transactionHistory.length === 0) return;
+
+            tbody.innerHTML = transactionHistory.map(tx => `
+                <tr>
+                    <td><b>${tx.id}</b></td>
+                    <td>${tx.user}</td>
+                    <td style="color: var(--tiktok-red); font-weight: bold;">+${tx.coins.toLocaleString()} Xu</td>
+                    <td>${tx.price.toLocaleString('vi-VN')} đ</td>
+                    <td style="color: var(--text-sub);">${tx.time}</td>
+                    <td><span class="badge-success">Thành công</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function resetToStart() {
+            closeModal();
+            resetCoinSelection();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function closeModal() {
+            if (checkTimer) clearTimeout(checkTimer);
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
